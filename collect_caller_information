@@ -1,0 +1,56 @@
+exports.handler = function(context, event, callback) {
+    const responseObject = {
+        "actions": [
+            {
+                "collect": {
+                    "name": "collect_caller_information",
+                    "questions": [
+                        {
+		            "question": "What is your first name?",
+                            "name": "first_name",
+                            "type": "Twilio.FIRST_NAME"
+		        },
+		        {
+		            "question": "What is your last name?",
+                            "name": "last_name",
+                            "type": "Twilio.LAST_NAME"
+		        },
+		        {
+		            "question": "What is your birthdate?",
+                            "name": "birth_date",
+                            "type": "Twilio.DATE"
+		        },
+                        {
+		            "question": "What is your phone number?",
+                            "name": "phone_number",
+                            "type": "Twilio.NUMBER"
+		        },
+                {
+		            "question": "What city do you live in?",
+                            "name": "residential_city",
+                            "type": "Twilio.CITY"
+	            },
+	            {
+		            "question": "What is your zip code?",
+                            "name": "zip_code",
+                            "type": "Twilio.NUMBER_SEQUENCE"
+	            },
+                {
+		            "question": "What is your house/building number?",
+                            "name": "house_number",
+                            "type": "Twilio.NUMBER"
+	            },
+                {
+		            "question": "What street and floor/apt. number do you live on?  For example: North Salina St. Apt. B",
+                            "name": "street_name"
+                }
+	            ],
+	            "on_complete": {
+	                "redirect": "https://straw-grouse-6193.twil.io/collect_on_complete"
+                    }
+                }
+            }
+        ]
+    };
+    callback(null, responseObject);
+};
