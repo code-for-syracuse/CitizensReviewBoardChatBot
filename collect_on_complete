@@ -1,0 +1,59 @@
+exports.handler = function(context, event, callback) {
+    const {
+        GoogleSpreadsheet
+    } = require('google-spreadsheet');
+    const doc = new GoogleSpreadsheet('1eqmndvwTkfqhjt1etz5ecxVS8SaBsRxzfjxCJpfQEqs');
+    
+    let responseObject = {};
+    let memory = JSON.parse(event.Memory);
+    let first_name = memory.twilio.collected_data.collect_caller_information.answers.first_name.answer;
+    let last_name = memory.twilio.collected_data.collect_caller_information.answers.last_name.answer;
+    let birth_date = memory.twilio.collected_data.collect_caller_information.answers.birth_date.answer;
+    let phone_number = memory.twilio.collected_data.collect_caller_information.answers.phone_number.answer;
+    let residential_city = memory.twilio.collected_data.collect_caller_information.answers.residential_city.answer;
+    let zip_code = memory.twilio.collected_data.collect_caller_information.answers.zip_code.answer;
+    let house_number = memory.twilio.collected_data.collect_caller_information.answers.house_number.answer;
+    let street_name = memory.twilio.collected_data.collect_caller_information.answers.street_name.answer;
+    
+    console.log("First name: " + first_name);
+    console.log("Last name: " + last_name);
+    console.log("Phone number: " + phone_number);
+    console.log("Residential city: " + residential_city);
+    console.log("Zip Code: " + zip_code);
+    console.log("House Number: " + house_number);
+    console.log("Home address: " + street_name);
+    let message = "Hi " + first_name + " " + last_name + ". We have documented that your phone number is " + phone_number + " and you live at " + house_number + " " + street_name + " " + residential_city + ", NY " + zip_code + ".  Thank you!  Now could you to please tell me some information about what happened.";
+    responseObject = {
+        "actions": [{
+            "say": {
+                "speech": message
+            }
+        }]
+    };
+    
+    callback(null, responseObject);
+    console.log('GOOGLE CREDENTIALS:', context.client_email, context.private_key);
+    // Send data to Google Spreadsheet
+    doc.useServiceAccountAuth({
+        client_email: context.client_email,
+        private_key: context.private_key,
+    });
+    
+    doc.loadInfo().then(function() {
+        console.log(doc.title);
+        const sheet = doc.sheetsByIndex[0];
+        console.log('Spreadsheet title: ', sheet.title);
+        // Get all of the rows from the spreadsheet.
+        sheet.getRows(1, function(err, rows) {
+            console.log(rows);
+            doc.addRow({
+                "First name": first_name,
+                "Last name": last_name,
+                "Phone number": phone_number,
+            });
+        });
+        
+    }).catch(function(e) {
+        console.log("doc.loadinfo failed", e);
+    });
+}
